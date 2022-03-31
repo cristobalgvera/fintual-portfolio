@@ -22,35 +22,55 @@ describe('simple portfolio', () => {
   }
 
   it.each([
-    [[0, 10], [0, 5], 15],
-    [[5, 25], [10, 5], 15],
-    [[10, 10], [5, 0], -5],
-    [[10, 9], [5, 4], -2],
-    [[10, 5], [5, 10], 0],
+    [[9, 10], [4, 5], 0.361],
+    [[20, 25], [10, 5], -0.25],
+    [[10, 10], [5, 1], -0.8],
+    [[10, 9], [5, 4], -0.3],
+    [[10, 5], [5, 10], 0.5],
     [[10, 10], [5, 5], 0],
   ])(
-    'should get profit between two dates for %p and %p stocks, expecting %p',
+    'should get cumulative profit between two dates for %p and %p stocks, expecting %p',
     ([from1, to1], [from2, to2], expected) => {
       // given
       const stocks = [new TestStock(from1, to1), new TestStock(from2, to2)];
       const portfolio = new SimplePortfolio(stocks);
 
       // when
-      const actual = portfolio.getProfitBetweenDates(FROM_DATE, TO_DATE);
+      const actual = portfolio.getProfitBetweenDates(
+        FROM_DATE,
+        TO_DATE,
+      );
 
       // then
       expect(actual).toEqual(expected);
     },
   );
 
-  it('should get profit zero when portfolio has no stocks', () => {
+  it('should get cumulative profit zero when portfolio has no stocks', () => {
     // given
     const portfolio = new SimplePortfolio();
 
     // when
-    const actual = portfolio.getProfitBetweenDates(FROM_DATE, TO_DATE);
+    const actual = portfolio.getProfitBetweenDates(
+      FROM_DATE,
+      TO_DATE,
+    );
 
     // then
     expect(actual).toEqual(0);
-  })
+  });
+
+  it.each([[[0, 1]], [[1, 0]], [[0, 0]]])(
+    'should throw an error if either base or to compare stock price is zero: %p',
+    ([from, to]) => {
+      // given
+      const portfolio = new SimplePortfolio([new TestStock(from, to)]);
+
+      // when
+      // then
+      expect(() =>
+        portfolio.getProfitBetweenDates(FROM_DATE, TO_DATE),
+      ).toThrowError(/Invalid stock price/);
+    },
+  );
 });
