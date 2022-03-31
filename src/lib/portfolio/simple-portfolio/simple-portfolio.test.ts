@@ -22,11 +22,11 @@ describe('simple portfolio', () => {
   }
 
   it.each([
-    [[0, 10], [0, 5], 15],
-    [[5, 25], [10, 5], 15],
-    [[10, 10], [5, 0], -5],
-    [[10, 9], [5, 4], -2],
-    [[10, 5], [5, 10], 0],
+    [[9, 10], [4, 5], 0.361],
+    [[20, 25], [10, 5], -0.25],
+    [[10, 10], [5, 1], -0.8],
+    [[10, 9], [5, 4], -0.3],
+    [[10, 5], [5, 10], 0.5],
     [[10, 10], [5, 5], 0],
   ])(
     'should get profit between two dates for %p and %p stocks, expecting %p',
@@ -52,5 +52,27 @@ describe('simple portfolio', () => {
 
     // then
     expect(actual).toEqual(0);
-  })
+  });
+
+  it('should throw an error if base stock price is zero', () => {
+    // given
+    const portfolio = new SimplePortfolio([new TestStock(0, 1)]);
+
+    // when
+    // then
+    expect(() =>
+      portfolio.getProfitBetweenDates(FROM_DATE, TO_DATE),
+    ).toThrowError(/Invalid stock price/);
+  });
+
+  it('should throw an error if to compate stock price is zero', () => {
+    // given
+    const portfolio = new SimplePortfolio([new TestStock(1, 0)]);
+
+    // when
+    // then
+    expect(() =>
+      portfolio.getProfitBetweenDates(FROM_DATE, TO_DATE),
+    ).toThrowError(/Invalid stock price/);
+  });
 });
