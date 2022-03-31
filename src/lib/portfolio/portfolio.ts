@@ -1,3 +1,4 @@
 export default interface Portfolio {
-  getProfitBetweenDates(from: Date, to: Date): number;
+  getCumulativeProfitBetweenDates(from: Date, to: Date): number;
+  getAnnualizedProfitBetweenDates(from: Date, to: Date): number;
 }
